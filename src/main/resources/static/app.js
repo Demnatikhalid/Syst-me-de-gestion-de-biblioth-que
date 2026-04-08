@@ -22,6 +22,11 @@ const refreshButton = document.getElementById("refresh-button");
 const listState = document.getElementById("list-state");
 const livresList = document.getElementById("livres-list");
 const bookCount = document.getElementById("book-count");
+const loanState = document.getElementById("loan-state");
+const empruntsList = document.getElementById("emprunts-list");
+const loanCount = document.getElementById("loan-count");
+
+let refreshTimer = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     initialiserAuthTabs();
@@ -80,6 +85,7 @@ registerForm.addEventListener("submit", async (event) => {
 });
 
 logoutButton.addEventListener("click", () => {
+    stopActualisation();
     localStorage.removeItem(sessionKey);
     libraryShell.classList.add("hidden");
     authShell.classList.remove("hidden");
@@ -93,21 +99,30 @@ form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const formData = new FormData(form);
+    const utilisateur = lireUtilisateurCourant();
+    if (!utilisateur) {
+        afficherMessage("Vous devez etre connecte pour creer un livre.", "error");
+        return;
+    }
+
     const payload = {
         titre: formData.get("titre")?.toString().trim(),
         auteur: formData.get("auteur")?.toString().trim(),
         categorie: formData.get("categorie")?.toString().trim(),
-        isbn: formData.get("isbn")?.toString().trim()
+        isbn: formData.get("isbn")?.toString().trim(),
+        utilisateurId: utilisateur.id,
+        dateDebutEmprunt: formData.get("dateDebutEmprunt")?.toString().trim(),
+        dateFinEmprunt: formData.get("dateFinEmprunt")?.toString().trim()
     };
 
     submitButton.disabled = true;
     afficherMessage("Enregistrement du livre...", "success");
 
     try {
-        const data = await envoyerJson("/api/livres", payload);
+        const data = await envoyerJson("/api/livres/avec-emprunt", payload);
         form.reset();
-        afficherMessage(`Livre "${data.titre}" ajoute avec succes.`, "success");
-        await chargerLivres();
+        afficherMessage(`Livre "${data.livre.titre}" ajoute et emprunte avec succes.`, "success");
+        await chargerBibliotheque();
     } catch (error) {
         afficherMessage(error.message, "error");
     } finally {
@@ -121,7 +136,7 @@ resetButton.addEventListener("click", () => {
 });
 
 refreshButton.addEventListener("click", () => {
-    chargerLivres();
+    chargerBibliotheque();
 });
 
 function initialiserAuthTabs() {
@@ -158,29 +173,53 @@ function connecterUtilisateur(utilisateur, charger = true) {
     currentUserEmail.textContent = utilisateur.email;
     authShell.classList.add("hidden");
     libraryShell.classList.remove("hidden");
+    demarrerActualisation();
     if (charger) {
-        chargerLivres();
+        chargerBibliotheque();
     }
 }
 
-async function chargerLivres() {
-    listState.textContent = "Chargement des livres...";
+function lireUtilisateurCourant() {
+    const sessionBrute = localStorage.getItem(sessionKey);
+    return sessionBrute ? JSON.parse(sessionBrute) : null;
+}
+
+function demarrerActualisation() {
+    stopActualisation();
+    refreshTimer = setInterval(() => {
+        chargerBibliotheque();
+    }, 30000);
+}
+
+function stopActualisation() {
+    if (refreshTimer !== null) {
+        clearInterval(refreshTimer);
+        refreshTimer = null;
+    }
+}
+
+async function chargerBibliotheque() {
+    listState.textContent = "Chargement de la liste des livres...";
     listState.classList.remove("hidden");
+    loanState.textContent = "Chargement des emprunts...";
+    loanState.classList.remove("hidden");
     livresList.innerHTML = "";
+    empruntsList.innerHTML = "";
 
     try {
-        const response = await fetch("/api/livres");
-        const livres = await response.json();
-
-        if (!response.ok) {
-            throw new Error("Impossible de recuperer la liste des livres.");
-        }
-
+        const [livres, emprunts] = await Promise.all([
+            recupererJson("/api/livres"),
+            recupererJson("/api/emprunts")
+        ]);
         renderLivres(livres);
+        renderEmprunts(emprunts, livres);
     } catch (error) {
         bookCount.textContent = "Erreur";
+        loanCount.textContent = "Erreur";
         listState.textContent = error.message;
+        loanState.textContent = error.message;
         livresList.innerHTML = "";
+        empruntsList.innerHTML = "";
     }
 }
 
@@ -210,6 +249,55 @@ function renderLivres(livres) {
             </div>
         </li>
     `).join("");
+}
+
+function renderEmprunts(emprunts, livres) {
+    loanCount.textContent = `${emprunts.length} emprunt(s) actif(s)`;
+
+    if (emprunts.length === 0) {
+        loanState.textContent = "Aucun emprunt actif pour le moment.";
+        loanState.classList.remove("hidden");
+        return;
+    }
+
+    const livresParId = new Map(livres.map((livre) => [livre.id, livre]));
+    const utilisateur = lireUtilisateurCourant();
+    loanState.classList.add("hidden");
+
+    empruntsList.innerHTML = emprunts.map((emprunt) => {
+        const livre = livresParId.get(emprunt.livreId);
+        const titreLivre = livre ? livre.titre : `Livre #${emprunt.livreId}`;
+        return `
+            <li class="book-item loan-item">
+                <div class="book-top">
+                    <div>
+                        <h3 class="book-title">${echapperHtml(titreLivre)}</h3>
+                        <p class="book-isbn">Utilisateur: ${echapperHtml(utilisateur ? utilisateur.nom : "Inconnu")}</p>
+                    </div>
+                    <span class="book-id">Emprunt #${emprunt.id}</span>
+                </div>
+                <div class="book-meta">
+                    <span class="chip">Livre ID: ${emprunt.livreId}</span>
+                    <span class="chip">Utilisateur ID: ${emprunt.utilisateurId}</span>
+                </div>
+                <div class="loan-dates">
+                    <span>Debut: ${echapperHtml(emprunt.dateEmprunt)}</span>
+                    <span>Fin: ${echapperHtml(emprunt.dateRetour)}</span>
+                </div>
+            </li>
+        `;
+    }).join("");
+}
+
+async function recupererJson(url) {
+    const response = await fetch(url);
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        throw new Error(data.message || "Une erreur est survenue.");
+    }
+
+    return data;
 }
 
 async function envoyerJson(url, payload) {

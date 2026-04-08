@@ -1,7 +1,10 @@
 package com.market01.systemegestionbibliotheue.controller;
 
+import com.market01.systemegestionbibliotheue.dto.CreateLivreAvecEmpruntRequest;
 import com.market01.systemegestionbibliotheue.dto.CreateLivreRequest;
+import com.market01.systemegestionbibliotheue.dto.LivreAvecEmpruntResponse;
 import com.market01.systemegestionbibliotheue.model.Livre;
+import com.market01.systemegestionbibliotheue.service.BibliothequeService;
 import com.market01.systemegestionbibliotheue.service.LivreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +22,11 @@ import java.util.List;
 public class LivreController {
 
     private final LivreService livreService;
+    private final BibliothequeService bibliothequeService;
 
-    public LivreController(LivreService livreService) {
+    public LivreController(LivreService livreService, BibliothequeService bibliothequeService) {
         this.livreService = livreService;
+        this.bibliothequeService = bibliothequeService;
     }
 
     @GetMapping
@@ -38,5 +43,11 @@ public class LivreController {
     @ResponseStatus(HttpStatus.CREATED)
     public Livre creer(@RequestBody CreateLivreRequest request) {
         return livreService.creer(request);
+    }
+
+    @PostMapping("/avec-emprunt")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LivreAvecEmpruntResponse creerAvecEmprunt(@RequestBody CreateLivreAvecEmpruntRequest request) {
+        return bibliothequeService.creerLivreAvecEmprunt(request);
     }
 }

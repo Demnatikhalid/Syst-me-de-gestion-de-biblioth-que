@@ -7,6 +7,7 @@ public class CreateEmpruntRequest {
     private Long utilisateurId;
     private Long livreId;
     private LocalDate dateEmprunt;
+    private LocalDate dateRetour;
 
     public CreateEmpruntRequest() {
     }
@@ -33,5 +34,13 @@ public class CreateEmpruntRequest {
 
     public void setDateEmprunt(LocalDate dateEmprunt) {
         this.dateEmprunt = dateEmprunt;
+    }
+
+    public LocalDate getDateRetour() {
+        return dateRetour;
+    }
+
+    public void setDateRetour(LocalDate dateRetour) {
+        this.dateRetour = dateRetour;
     }
 }

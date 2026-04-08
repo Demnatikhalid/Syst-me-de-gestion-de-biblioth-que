@@ -79,6 +79,17 @@ body {
     gap: 24px;
 }
 
+.library-grid {
+    display: grid;
+    grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
+    gap: 24px;
+}
+
+.dashboard-stack {
+    display: grid;
+    gap: 24px;
+}
+
 .panel {
     position: relative;
     overflow: hidden;
@@ -357,6 +368,19 @@ button:disabled {
     font-size: 0.95rem;
 }
 
+.loan-list .book-item {
+    background: linear-gradient(135deg, rgba(255, 248, 236, 0.96), rgba(251, 241, 221, 0.88));
+}
+
+.loan-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 0.93rem;
+    color: var(--muted);
+    font-weight: 700;
+}
+
 .hidden {
     display: none;
 }
@@ -373,7 +397,8 @@ button:disabled {
 }
 
 @media (max-width: 860px) {
-    .layout {
+    .layout,
+    .library-grid {
         grid-template-columns: 1fr;
     }
 

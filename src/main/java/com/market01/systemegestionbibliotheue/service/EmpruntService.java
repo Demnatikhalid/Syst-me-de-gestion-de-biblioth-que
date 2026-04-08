@@ -27,40 +27,50 @@ public class EmpruntService {
     }
 
     public List<Emprunt> lister() {
+        nettoyerEmpruntsExpires();
         return empruntRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public Emprunt trouverParId(Long id) {
+        nettoyerEmpruntsExpires();
         return empruntRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Emprunt introuvable avec l'id " + id + "."));
     }
 
     @Transactional
     public Emprunt creer(CreateEmpruntRequest request) {
+        nettoyerEmpruntsExpires();
+
         Long utilisateurId = idObligatoire(request.getUtilisateurId(), "utilisateurId");
         Long livreId = idObligatoire(request.getLivreId(), "livreId");
 
         utilisateurService.trouverParId(utilisateurId);
         livreService.trouverParId(livreId);
 
-        boolean livreDejaEmprunte = empruntRepository.existsByLivreIdAndDateRetourIsNull(livreId);
+        LocalDate aujourdHui = LocalDate.now();
+        boolean livreDejaEmprunte = empruntRepository.findByLivreId(livreId).stream()
+                .anyMatch(emprunt -> emprunt.getDateRetour() == null || !emprunt.getDateRetour().isBefore(aujourdHui));
 
         if (livreDejaEmprunte) {
             throw new ConflictException("Le livre " + livreId + " est deja emprunte.");
         }
 
         LocalDate dateEmprunt = request.getDateEmprunt() != null ? request.getDateEmprunt() : LocalDate.now();
-        Emprunt emprunt = new Emprunt(null, utilisateurId, livreId, dateEmprunt, null);
+        LocalDate dateRetour = request.getDateRetour();
+        if (dateRetour == null) {
+            throw new IllegalArgumentException("Le champ 'dateRetour' est obligatoire.");
+        }
+        if (dateRetour.isBefore(dateEmprunt)) {
+            throw new IllegalArgumentException("La date de fin d'emprunt ne peut pas etre anterieure a la date de debut.");
+        }
+
+        Emprunt emprunt = new Emprunt(null, utilisateurId, livreId, dateEmprunt, dateRetour);
         return empruntRepository.save(emprunt);
     }
 
     @Transactional
     public Emprunt retourner(Long id, RetourEmpruntRequest request) {
         Emprunt emprunt = trouverParId(id);
-        if (emprunt.getDateRetour() != null) {
-            throw new ConflictException("Cet emprunt a deja ete retourne.");
-        }
-
         LocalDate dateRetour = request != null && request.getDateRetour() != null
                 ? request.getDateRetour()
                 : LocalDate.now();
@@ -70,7 +80,13 @@ public class EmpruntService {
         }
 
         emprunt.setDateRetour(dateRetour);
-        return empruntRepository.save(emprunt);
+        empruntRepository.delete(emprunt);
+        return emprunt;
+    }
+
+    @Transactional
+    public void nettoyerEmpruntsExpires() {
+        empruntRepository.deleteByDateRetourLessThanEqual(LocalDate.now());
     }
 
     private Long idObligatoire(Long id, String nomChamp) {

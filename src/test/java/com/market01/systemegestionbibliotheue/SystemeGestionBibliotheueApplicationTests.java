@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 class SystemeGestionBibliotheueApplicationTests {
@@ -64,10 +66,8 @@ class SystemeGestionBibliotheueApplicationTests {
         when(utilisateurRepository.findById(1L)).thenAnswer(invocation -> Optional.ofNullable(utilisateurSauvegarde[0]));
         when(utilisateurRepository.findByEmail("khalid@example.com")).thenAnswer(invocation -> Optional.ofNullable(utilisateurSauvegarde[0]));
 
-        when(empruntRepository.existsByLivreIdAndDateRetourIsNull(1L)).thenAnswer(invocation ->
-                empruntSauvegarde[0] != null
-                        && empruntSauvegarde[0].getLivreId().equals(1L)
-                        && empruntSauvegarde[0].getDateRetour() == null
+        when(empruntRepository.findByLivreId(1L)).thenAnswer(invocation ->
+                empruntSauvegarde[0] == null ? List.of() : List.of(empruntSauvegarde[0])
         );
         when(empruntRepository.save(any(Emprunt.class))).thenAnswer(invocation -> {
             Emprunt emprunt = invocation.getArgument(0);
@@ -78,6 +78,10 @@ class SystemeGestionBibliotheueApplicationTests {
             return emprunt;
         });
         when(empruntRepository.findById(1L)).thenAnswer(invocation -> Optional.ofNullable(empruntSauvegarde[0]));
+        doAnswer(invocation -> {
+            empruntSauvegarde[0] = null;
+            return null;
+        }).when(empruntRepository).delete(any(Emprunt.class));
 
         CreateLivreRequest livreRequest = new CreateLivreRequest();
         livreRequest.setTitre("Clean Code");
@@ -98,6 +102,7 @@ class SystemeGestionBibliotheueApplicationTests {
         empruntRequest.setUtilisateurId(utilisateur.getId());
         empruntRequest.setLivreId(livre.getId());
         empruntRequest.setDateEmprunt(LocalDate.of(2026, 4, 8));
+        empruntRequest.setDateRetour(LocalDate.of(2026, 4, 12));
         Emprunt emprunt = empruntService.creer(empruntRequest);
 
         assertEquals(1L, livre.getId());
