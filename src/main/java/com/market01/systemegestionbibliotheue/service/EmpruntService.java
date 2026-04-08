@@ -89,6 +89,44 @@ public class EmpruntService {
         empruntRepository.deleteByDateRetourLessThanEqual(LocalDate.now());
     }
 
+    public Emprunt trouverParLivreId(Long livreId) {
+        nettoyerEmpruntsExpires();
+        return empruntRepository.findByLivreId(livreId).stream()
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Emprunt introuvable pour le livre " + livreId + "."));
+    }
+
+    @Transactional
+    public Emprunt modifierParLivreId(Long livreId, CreateEmpruntRequest request) {
+        nettoyerEmpruntsExpires();
+
+        Long utilisateurId = idObligatoire(request.getUtilisateurId(), "utilisateurId");
+        utilisateurService.trouverParId(utilisateurId);
+        livreService.trouverParId(livreId);
+
+        LocalDate dateEmprunt = request.getDateEmprunt() != null ? request.getDateEmprunt() : LocalDate.now();
+        LocalDate dateRetour = request.getDateRetour();
+        if (dateRetour == null) {
+            throw new IllegalArgumentException("Le champ 'dateRetour' est obligatoire.");
+        }
+        if (dateRetour.isBefore(dateEmprunt)) {
+            throw new IllegalArgumentException("La date de fin d'emprunt ne peut pas etre anterieure a la date de debut.");
+        }
+
+        List<Emprunt> emprunts = empruntRepository.findByLivreId(livreId);
+        Emprunt emprunt = emprunts.stream().findFirst().orElse(new Emprunt());
+        emprunt.setLivreId(livreId);
+        emprunt.setUtilisateurId(utilisateurId);
+        emprunt.setDateEmprunt(dateEmprunt);
+        emprunt.setDateRetour(dateRetour);
+        return empruntRepository.save(emprunt);
+    }
+
+    @Transactional
+    public void supprimerParLivreId(Long livreId) {
+        empruntRepository.deleteByLivreId(livreId);
+    }
+
     private Long idObligatoire(Long id, String nomChamp) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("Le champ '" + nomChamp + "' est obligatoire.");

@@ -39,4 +39,30 @@ public class BibliothequeService {
         Emprunt emprunt = empruntService.creer(createEmpruntRequest);
         return new LivreAvecEmpruntResponse(livre, emprunt);
     }
+
+    @Transactional
+    public LivreAvecEmpruntResponse modifierLivreAvecEmprunt(Long livreId, CreateLivreAvecEmpruntRequest request) {
+        CreateLivreRequest createLivreRequest = new CreateLivreRequest();
+        createLivreRequest.setTitre(request.getTitre());
+        createLivreRequest.setAuteur(request.getAuteur());
+        createLivreRequest.setCategorie(request.getCategorie());
+        createLivreRequest.setIsbn(request.getIsbn());
+
+        Livre livre = livreService.modifier(livreId, createLivreRequest);
+
+        CreateEmpruntRequest createEmpruntRequest = new CreateEmpruntRequest();
+        createEmpruntRequest.setUtilisateurId(request.getUtilisateurId());
+        createEmpruntRequest.setLivreId(livre.getId());
+        createEmpruntRequest.setDateEmprunt(request.getDateDebutEmprunt());
+        createEmpruntRequest.setDateRetour(request.getDateFinEmprunt());
+
+        Emprunt emprunt = empruntService.modifierParLivreId(livreId, createEmpruntRequest);
+        return new LivreAvecEmpruntResponse(livre, emprunt);
+    }
+
+    @Transactional
+    public void supprimerLivreAvecEmprunts(Long livreId) {
+        empruntService.supprimerParLivreId(livreId);
+        livreService.supprimer(livreId);
+    }
 }

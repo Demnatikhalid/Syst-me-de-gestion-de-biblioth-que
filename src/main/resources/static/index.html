@@ -93,8 +93,8 @@
         <section class="library-grid">
             <article class="panel panel-form">
                 <div class="panel-header">
-                    <h2>Nouveau livre</h2>
-                    <p>Ajoutez un livre et son emprunt en meme temps.</p>
+                    <h2 id="form-title">Nouveau livre</h2>
+                    <p id="form-subtitle">Ajoutez un livre et son emprunt en meme temps.</p>
                 </div>
 
                 <form id="livre-form" class="book-form">
@@ -130,6 +130,7 @@
 
                     <div class="form-actions">
                         <button type="submit" id="submit-button">Enregistrer</button>
+                        <button type="button" id="cancel-edit-button" class="secondary hidden">Annuler la modification</button>
                         <button type="button" id="reset-button" class="secondary">Vider</button>
                     </div>
                 </form>

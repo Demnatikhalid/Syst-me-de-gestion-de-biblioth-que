@@ -46,6 +46,27 @@ public class LivreService {
         return livreRepository.save(livre);
     }
 
+    @Transactional
+    public Livre modifier(Long id, CreateLivreRequest request) {
+        Livre livre = trouverParId(id);
+        String isbn = champObligatoire(request.getIsbn(), "isbn");
+        if (livreRepository.existsByIsbnAndIdNot(isbn, id)) {
+            throw new ConflictException("Un livre avec l'ISBN " + isbn + " existe deja.");
+        }
+
+        livre.setTitre(champObligatoire(request.getTitre(), "titre"));
+        livre.setAuteur(champObligatoire(request.getAuteur(), "auteur"));
+        livre.setCategorie(champObligatoire(request.getCategorie(), "categorie"));
+        livre.setIsbn(isbn);
+        return livreRepository.save(livre);
+    }
+
+    @Transactional
+    public void supprimer(Long id) {
+        Livre livre = trouverParId(id);
+        livreRepository.delete(livre);
+    }
+
     private String champObligatoire(String valeur, String nomChamp) {
         if (valeur == null || valeur.isBlank()) {
             throw new IllegalArgumentException("Le champ '" + nomChamp + "' est obligatoire.");

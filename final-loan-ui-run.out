@@ -78,3 +78,331 @@ Hibernate:
         emprunts e1_0 
     order by
         e1_0.id
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        l1_0.id 
+    from
+        livres l1_0 
+    where
+        l1_0.isbn=? 
+    limit
+        ?
+Hibernate: 
+    insert 
+    into
+        livres
+        (auteur, categorie, isbn, titre) 
+    values
+        (?, ?, ?, ?)
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.adresse,
+        u1_0.email,
+        u1_0.mot_de_passe,
+        u1_0.nom,
+        u1_0.telephone 
+    from
+        utilisateurs u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.livre_id=?
+Hibernate: 
+    insert 
+    into
+        emprunts
+        (date_emprunt, date_retour, livre_id, utilisateur_id) 
+    values
+        (?, ?, ?, ?)
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.0.5:run (default-cli) on project Systeme-gestion-bibliotheue: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

@@ -10,5 +10,7 @@ public interface EmpruntRepository extends JpaRepository<Emprunt, Long> {
 
     List<Emprunt> findByLivreId(Long livreId);
 
+    void deleteByLivreId(Long livreId);
+
     void deleteByDateRetourLessThanEqual(LocalDate date);
 }

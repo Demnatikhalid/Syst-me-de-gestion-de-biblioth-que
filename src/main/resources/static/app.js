@@ -15,8 +15,11 @@ const currentUserEmail = document.getElementById("current-user-email");
 const logoutButton = document.getElementById("logout-button");
 
 const form = document.getElementById("livre-form");
+const formTitle = document.getElementById("form-title");
+const formSubtitle = document.getElementById("form-subtitle");
 const feedback = document.getElementById("feedback");
 const submitButton = document.getElementById("submit-button");
+const cancelEditButton = document.getElementById("cancel-edit-button");
 const resetButton = document.getElementById("reset-button");
 const refreshButton = document.getElementById("refresh-button");
 const listState = document.getElementById("list-state");
@@ -27,6 +30,9 @@ const empruntsList = document.getElementById("emprunts-list");
 const loanCount = document.getElementById("loan-count");
 
 let refreshTimer = null;
+let livreEnEditionId = null;
+let livresCourants = [];
+let empruntsCourants = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     initialiserAuthTabs();
@@ -116,12 +122,20 @@ form.addEventListener("submit", async (event) => {
     };
 
     submitButton.disabled = true;
-    afficherMessage("Enregistrement du livre...", "success");
+    afficherMessage(livreEnEditionId ? "Modification du livre..." : "Enregistrement du livre...", "success");
 
     try {
-        const data = await envoyerJson("/api/livres/avec-emprunt", payload);
-        form.reset();
-        afficherMessage(`Livre "${data.livre.titre}" ajoute et emprunte avec succes.`, "success");
+        const modeEdition = livreEnEditionId !== null;
+        const data = livreEnEditionId
+            ? await envoyerJson(`/api/livres/${livreEnEditionId}/avec-emprunt`, payload, "PUT")
+            : await envoyerJson("/api/livres/avec-emprunt", payload);
+        reinitialiserFormulaireLivre();
+        afficherMessage(
+            modeEdition
+                ? `Livre "${data.livre.titre}" modifie avec succes.`
+                : `Livre "${data.livre.titre}" ajoute et emprunte avec succes.`,
+            "success"
+        );
         await chargerBibliotheque();
     } catch (error) {
         afficherMessage(error.message, "error");
@@ -131,12 +145,52 @@ form.addEventListener("submit", async (event) => {
 });
 
 resetButton.addEventListener("click", () => {
-    form.reset();
-    afficherMessage("", "");
+    reinitialiserFormulaireLivre();
 });
 
 refreshButton.addEventListener("click", () => {
     chargerBibliotheque();
+});
+
+cancelEditButton.addEventListener("click", () => {
+    reinitialiserFormulaireLivre();
+    afficherMessage("Modification annulee.", "success");
+});
+
+livresList.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) {
+        return;
+    }
+
+    const livreId = Number(button.dataset.id);
+    if (!livreId) {
+        return;
+    }
+
+    if (button.dataset.action === "edit") {
+        chargerLivreDansLeFormulaire(livreId);
+        return;
+    }
+
+    if (button.dataset.action === "delete") {
+        const livre = livresCourants.find((item) => item.id === livreId);
+        const confirmation = window.confirm(`Supprimer le livre "${livre ? livre.titre : "#" + livreId}" ?`);
+        if (!confirmation) {
+            return;
+        }
+
+        try {
+            await envoyerSansCorps(`/api/livres/${livreId}`, "DELETE");
+            if (livreEnEditionId === livreId) {
+                reinitialiserFormulaireLivre();
+            }
+            afficherMessage("Livre supprime avec succes.", "success");
+            await chargerBibliotheque();
+        } catch (error) {
+            afficherMessage(error.message, "error");
+        }
+    }
 });
 
 function initialiserAuthTabs() {
@@ -211,6 +265,8 @@ async function chargerBibliotheque() {
             recupererJson("/api/livres"),
             recupererJson("/api/emprunts")
         ]);
+        livresCourants = livres;
+        empruntsCourants = emprunts;
         renderLivres(livres);
         renderEmprunts(emprunts, livres);
     } catch (error) {
@@ -246,6 +302,10 @@ function renderLivres(livres) {
             <div class="book-meta">
                 <span class="chip">Auteur: ${echapperHtml(livre.auteur)}</span>
                 <span class="chip">Categorie: ${echapperHtml(livre.categorie)}</span>
+            </div>
+            <div class="item-actions">
+                <button type="button" class="secondary action-button" data-action="edit" data-id="${livre.id}">Edit</button>
+                <button type="button" class="danger action-button" data-action="delete" data-id="${livre.id}">Delete</button>
             </div>
         </li>
     `).join("");
@@ -300,9 +360,20 @@ async function recupererJson(url) {
     return data;
 }
 
-async function envoyerJson(url, payload) {
+async function envoyerSansCorps(url, method) {
     const response = await fetch(url, {
-        method: "POST",
+        method
+    });
+
+    if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || "Une erreur est survenue.");
+    }
+}
+
+async function envoyerJson(url, payload, method = "POST") {
+    const response = await fetch(url, {
+        method,
         headers: {
             "Content-Type": "application/json"
         },
@@ -316,6 +387,40 @@ async function envoyerJson(url, payload) {
     }
 
     return data;
+}
+
+function chargerLivreDansLeFormulaire(livreId) {
+    const livre = livresCourants.find((item) => item.id === livreId);
+    if (!livre) {
+        afficherMessage("Livre introuvable pour la modification.", "error");
+        return;
+    }
+
+    const emprunt = empruntsCourants.find((item) => item.livreId === livreId);
+    form.elements.titre.value = livre.titre ?? "";
+    form.elements.auteur.value = livre.auteur ?? "";
+    form.elements.categorie.value = livre.categorie ?? "";
+    form.elements.isbn.value = livre.isbn ?? "";
+    form.elements.dateDebutEmprunt.value = emprunt?.dateEmprunt ?? "";
+    form.elements.dateFinEmprunt.value = emprunt?.dateRetour ?? "";
+
+    livreEnEditionId = livreId;
+    formTitle.textContent = "Modifier le livre";
+    formSubtitle.textContent = "Mettez a jour le livre et son emprunt actif.";
+    submitButton.textContent = "Mettre a jour";
+    cancelEditButton.classList.remove("hidden");
+    afficherMessage(`Edition du livre "${livre.titre}".`, "success");
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function reinitialiserFormulaireLivre() {
+    form.reset();
+    livreEnEditionId = null;
+    formTitle.textContent = "Nouveau livre";
+    formSubtitle.textContent = "Ajoutez un livre et son emprunt en meme temps.";
+    submitButton.textContent = "Enregistrer";
+    cancelEditButton.classList.add("hidden");
+    afficherMessage("", "");
 }
 
 function afficherMessage(message, type) {
