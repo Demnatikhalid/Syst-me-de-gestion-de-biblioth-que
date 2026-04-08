@@ -3,7 +3,9 @@ package com.market01.systemegestionbibliotheue;
 import com.market01.systemegestionbibliotheue.dto.CreateEmpruntRequest;
 import com.market01.systemegestionbibliotheue.dto.CreateLivreRequest;
 import com.market01.systemegestionbibliotheue.dto.CreateUtilisateurRequest;
+import com.market01.systemegestionbibliotheue.dto.LoginRequest;
 import com.market01.systemegestionbibliotheue.dto.RetourEmpruntRequest;
+import com.market01.systemegestionbibliotheue.dto.UtilisateurSessionResponse;
 import com.market01.systemegestionbibliotheue.exception.ConflictException;
 import com.market01.systemegestionbibliotheue.model.Emprunt;
 import com.market01.systemegestionbibliotheue.model.Livre;
@@ -23,6 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -59,6 +62,7 @@ class SystemeGestionBibliotheueApplicationTests {
             return utilisateur;
         });
         when(utilisateurRepository.findById(1L)).thenAnswer(invocation -> Optional.ofNullable(utilisateurSauvegarde[0]));
+        when(utilisateurRepository.findByEmail("khalid@example.com")).thenAnswer(invocation -> Optional.ofNullable(utilisateurSauvegarde[0]));
 
         when(empruntRepository.existsByLivreIdAndDateRetourIsNull(1L)).thenAnswer(invocation ->
                 empruntSauvegarde[0] != null
@@ -87,6 +91,7 @@ class SystemeGestionBibliotheueApplicationTests {
         utilisateurRequest.setEmail("khalid@example.com");
         utilisateurRequest.setAdresse("Casablanca");
         utilisateurRequest.setTelephone("0600000000");
+        utilisateurRequest.setMotDePasse("secret123");
         Utilisateur utilisateur = utilisateurService.creer(utilisateurRequest);
 
         CreateEmpruntRequest empruntRequest = new CreateEmpruntRequest();
@@ -100,6 +105,8 @@ class SystemeGestionBibliotheueApplicationTests {
         assertEquals(1L, emprunt.getId());
         assertEquals(utilisateur.getId(), emprunt.getUtilisateurId());
         assertEquals(livre.getId(), emprunt.getLivreId());
+        assertNotNull(utilisateur.getMotDePasse());
+        assertTrue(!utilisateur.getMotDePasse().equals("secret123"));
 
         assertThrows(ConflictException.class, () -> empruntService.creer(empruntRequest));
 
@@ -107,8 +114,15 @@ class SystemeGestionBibliotheueApplicationTests {
         retourRequest.setDateRetour(LocalDate.of(2026, 4, 10));
         Emprunt empruntRetourne = empruntService.retourner(emprunt.getId(), retourRequest);
 
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("khalid@example.com");
+        loginRequest.setMotDePasse("secret123");
+        UtilisateurSessionResponse session = utilisateurService.authentifier(loginRequest);
+
         assertNotNull(empruntRetourne.getDateRetour());
         assertEquals(LocalDate.of(2026, 4, 10), empruntRetourne.getDateRetour());
+        assertEquals(utilisateur.getEmail(), session.getEmail());
+        assertEquals(utilisateur.getNom(), session.getNom());
     }
 
 }

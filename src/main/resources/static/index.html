@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des livres</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+<main class="page">
+    <section class="hero">
+        <p class="eyebrow">Systeme de gestion de bibliotheque</p>
+        <h1>Connexion utilisateur et gestion des livres</h1>
+        <p class="subtitle">
+            L'utilisateur se connecte avec son email et son mot de passe, puis il peut enregistrer des livres
+            et consulter la liste en temps reel.
+        </p>
+    </section>
+
+    <section id="auth-shell" class="auth-shell">
+        <article class="panel auth-panel">
+            <div class="panel-header auth-header">
+                <div>
+                    <h2>Acces utilisateur</h2>
+                    <p>Connectez-vous ou creez un compte pour acceder a l'interface des livres.</p>
+                </div>
+                <div class="auth-tabs" role="tablist" aria-label="Acces utilisateur">
+                    <button type="button" class="auth-tab active" data-auth-tab="login">Connexion</button>
+                    <button type="button" class="auth-tab" data-auth-tab="register">Inscription</button>
+                </div>
+            </div>
+
+            <div class="auth-grid">
+                <form id="login-form" class="auth-form" data-auth-panel="login">
+                    <label>
+                        <span>Email</span>
+                        <input type="email" name="email" placeholder="exemple@email.com" required>
+                    </label>
+
+                    <label>
+                        <span>Mot de passe</span>
+                        <input type="password" name="motDePasse" placeholder="Votre mot de passe" required>
+                    </label>
+
+                    <button type="submit" id="login-button">Se connecter</button>
+                </form>
+
+                <form id="register-form" class="auth-form hidden" data-auth-panel="register">
+                    <label>
+                        <span>Nom</span>
+                        <input type="text" name="nom" placeholder="Votre nom complet" required>
+                    </label>
+
+                    <label>
+                        <span>Email</span>
+                        <input type="email" name="email" placeholder="exemple@email.com" required>
+                    </label>
+
+                    <label>
+                        <span>Adresse</span>
+                        <input type="text" name="adresse" placeholder="Votre adresse" required>
+                    </label>
+
+                    <label>
+                        <span>Telephone</span>
+                        <input type="text" name="telephone" placeholder="Votre numero" required>
+                    </label>
+
+                    <label>
+                        <span>Mot de passe</span>
+                        <input type="password" name="motDePasse" placeholder="Choisissez un mot de passe" required>
+                    </label>
+
+                    <button type="submit" id="register-button">Creer le compte</button>
+                </form>
+            </div>
+
+            <p id="auth-feedback" class="feedback" aria-live="polite"></p>
+        </article>
+    </section>
+
+    <section id="library-shell" class="library-shell hidden">
+        <div class="user-banner">
+            <div>
+                <p class="user-label">Utilisateur connecte</p>
+                <h2 id="current-user-name">-</h2>
+                <p id="current-user-email" class="user-email">-</p>
+            </div>
+            <button type="button" id="logout-button" class="secondary">Se deconnecter</button>
+        </div>
+
+        <section class="layout">
+            <article class="panel panel-form">
+                <div class="panel-header">
+                    <h2>Nouveau livre</h2>
+                    <p>Ajoutez un livre dans la bibliotheque.</p>
+                </div>
+
+                <form id="livre-form" class="book-form">
+                    <label>
+                        <span>Titre</span>
+                        <input type="text" name="titre" placeholder="Ex: Le Petit Prince" required>
+                    </label>
+
+                    <label>
+                        <span>Auteur</span>
+                        <input type="text" name="auteur" placeholder="Ex: Antoine de Saint-Exupery" required>
+                    </label>
+
+                    <label>
+                        <span>Categorie</span>
+                        <input type="text" name="categorie" placeholder="Ex: Roman" required>
+                    </label>
+
+                    <label>
+                        <span>ISBN</span>
+                        <input type="text" name="isbn" placeholder="Ex: 9782070612758" required>
+                    </label>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submit-button">Enregistrer</button>
+                        <button type="button" id="reset-button" class="secondary">Vider</button>
+                    </div>
+                </form>
+
+                <p id="feedback" class="feedback" aria-live="polite"></p>
+            </article>
+
+            <article class="panel panel-list">
+                <div class="panel-header panel-header-inline">
+                    <div>
+                        <h2>Liste des livres</h2>
+                        <p id="book-count">Chargement...</p>
+                    </div>
+                    <button type="button" id="refresh-button" class="secondary">Actualiser</button>
+                </div>
+
+                <div id="list-state" class="list-state">Chargement de la liste...</div>
+                <ul id="livres-list" class="book-list"></ul>
+            </article>
+        </section>
+    </section>
+</main>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.market01.systemegestionbibliotheue.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,15 +28,20 @@ public class Utilisateur {
     @Column(nullable = false)
     private String telephone;
 
+    @JsonIgnore
+    @Column(name = "mot_de_passe")
+    private String motDePasse;
+
     public Utilisateur() {
     }
 
-    public Utilisateur(Long id, String nom, String email, String adresse, String telephone) {
+    public Utilisateur(Long id, String nom, String email, String adresse, String telephone, String motDePasse) {
         this.id = id;
         this.nom = nom;
         this.email = email;
         this.adresse = adresse;
         this.telephone = telephone;
+        this.motDePasse = motDePasse;
     }
 
     public Long getId() {
@@ -76,5 +82,13 @@ public class Utilisateur {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+
+    public String getMotDePasse() {
+        return motDePasse;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
     }
 }

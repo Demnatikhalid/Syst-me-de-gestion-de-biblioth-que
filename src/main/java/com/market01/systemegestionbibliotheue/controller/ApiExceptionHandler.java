@@ -3,6 +3,7 @@ package com.market01.systemegestionbibliotheue.controller;
 import com.market01.systemegestionbibliotheue.dto.ErrorResponse;
 import com.market01.systemegestionbibliotheue.exception.ConflictException;
 import com.market01.systemegestionbibliotheue.exception.NotFoundException;
+import com.market01.systemegestionbibliotheue.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,11 @@ public class ApiExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleBadRequest(IllegalArgumentException exception, HttpServletRequest request) {
         return buildResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException exception, HttpServletRequest request) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request.getRequestURI());
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String message, String path) {
