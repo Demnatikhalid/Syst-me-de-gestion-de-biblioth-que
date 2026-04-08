@@ -42,3 +42,264 @@
 2026-04-08T15:55:32.018+01:00  INFO 21680 --- [gestion_livres] [           main] o.s.b.w.a.WelcomePageHandlerMapping      : Adding welcome page: class path resource [static/index.html]
 2026-04-08T15:55:32.417+01:00  INFO 21680 --- [gestion_livres] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8083 (http) with context path '/'
 2026-04-08T15:55:32.424+01:00  INFO 21680 --- [gestion_livres] [           main] m.s.SystemeGestionBibliotheueApplication : Started SystemeGestionBibliotheueApplication in 6.19 seconds (process running for 6.811)
+2026-04-08T15:56:02.570+01:00  INFO 21680 --- [gestion_livres] [nio-8083-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-08T15:56:02.572+01:00  INFO 21680 --- [gestion_livres] [nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-04-08T15:56:02.577+01:00  INFO 21680 --- [gestion_livres] [nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.livre_id=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    where
+        l1_0.id=?
+Hibernate: 
+    delete 
+    from
+        livres 
+    where
+        id=?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    where
+        l1_0.id=?
+Hibernate: 
+    select
+        l1_0.id 
+    from
+        livres l1_0 
+    where
+        l1_0.isbn=? 
+        and l1_0.id<>? 
+    limit
+        ?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.adresse,
+        u1_0.email,
+        u1_0.mot_de_passe,
+        u1_0.nom,
+        u1_0.telephone 
+    from
+        utilisateurs u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.livre_id=?
+Hibernate: 
+    update
+        livres 
+    set
+        auteur=?,
+        categorie=?,
+        isbn=?,
+        titre=? 
+    where
+        id=?
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    where
+        e1_0.date_retour<=?
+Hibernate: 
+    select
+        l1_0.id,
+        l1_0.auteur,
+        l1_0.categorie,
+        l1_0.isbn,
+        l1_0.titre 
+    from
+        livres l1_0 
+    order by
+        l1_0.id
+Hibernate: 
+    select
+        e1_0.id,
+        e1_0.date_emprunt,
+        e1_0.date_retour,
+        e1_0.livre_id,
+        e1_0.utilisateur_id 
+    from
+        emprunts e1_0 
+    order by
+        e1_0.id
