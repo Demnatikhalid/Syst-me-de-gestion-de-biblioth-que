@@ -138,30 +138,18 @@
                 <p id="feedback" class="feedback" aria-live="polite"></p>
             </article>
 
-            <div class="dashboard-stack">
-                <article class="panel panel-list">
-                    <div class="panel-header panel-header-inline">
-                        <div>
-                            <h2>Tableau des livres</h2>
-                            <p id="book-count">Chargement...</p>
-                        </div>
-                        <button type="button" id="refresh-button" class="secondary">Actualiser</button>
+            <article class="panel panel-list">
+                <div class="panel-header panel-header-inline">
+                    <div>
+                        <h2>Tableau des livres</h2>
+                        <p id="book-count">Chargement...</p>
                     </div>
+                    <button type="button" id="refresh-button" class="secondary">Actualiser</button>
+                </div>
 
-                    <div id="list-state" class="list-state">Chargement de la liste des livres...</div>
-                    <ul id="livres-list" class="book-list"></ul>
-                </article>
-
-                <article class="panel panel-list">
-                    <div class="panel-header">
-                        <h2>Tableau des emprunts</h2>
-                        <p id="loan-count">Chargement...</p>
-                    </div>
-
-                    <div id="loan-state" class="list-state">Chargement des emprunts...</div>
-                    <ul id="emprunts-list" class="book-list loan-list"></ul>
-                </article>
-            </div>
+                <div id="list-state" class="list-state">Chargement de la liste des livres...</div>
+                <ul id="livres-list" class="book-list"></ul>
+            </article>
         </section>
     </section>
 </main>
