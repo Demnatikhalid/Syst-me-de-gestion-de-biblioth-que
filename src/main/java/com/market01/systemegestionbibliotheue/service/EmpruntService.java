@@ -26,11 +26,13 @@ public class EmpruntService {
         this.livreService = livreService;
     }
 
+    @Transactional
     public List<Emprunt> lister() {
         nettoyerEmpruntsExpires();
         return empruntRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
+    @Transactional
     public Emprunt trouverParId(Long id) {
         nettoyerEmpruntsExpires();
         return empruntRepository.findById(id)
@@ -84,11 +86,11 @@ public class EmpruntService {
         return emprunt;
     }
 
-    @Transactional
-    public void nettoyerEmpruntsExpires() {
+    private void nettoyerEmpruntsExpires() {
         empruntRepository.deleteByDateRetourLessThanEqual(LocalDate.now());
     }
 
+    @Transactional
     public Emprunt trouverParLivreId(Long livreId) {
         nettoyerEmpruntsExpires();
         return empruntRepository.findByLivreId(livreId).stream()

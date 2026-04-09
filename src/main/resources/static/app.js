@@ -255,13 +255,16 @@ async function chargerBibliotheque() {
     livresList.innerHTML = "";
 
     try {
-        const [livres, emprunts] = await Promise.all([
-            recupererJson("/api/livres"),
-            recupererJson("/api/emprunts")
-        ]);
+        const livres = await recupererJson("/api/livres");
         livresCourants = livres;
-        empruntsCourants = emprunts;
         renderLivres(livres);
+
+        try {
+            empruntsCourants = await recupererJson("/api/emprunts");
+        } catch (error) {
+            empruntsCourants = [];
+            afficherMessage("La liste des livres est disponible, mais les emprunts sont temporairement indisponibles.", "error");
+        }
     } catch (error) {
         bookCount.textContent = "Erreur";
         listState.textContent = error.message;
